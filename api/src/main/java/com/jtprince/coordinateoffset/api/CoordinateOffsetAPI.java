@@ -3,15 +3,10 @@ package com.jtprince.coordinateoffset.api;
 import com.jtprince.coordinateoffset.Offset;
 import com.jtprince.coordinateoffset.adapter.OffsetLocation;
 import com.jtprince.coordinateoffset.adapter.OffsetPlayer;
-import com.jtprince.coordinateoffset.config.CoordinateOffsetConfig;
-import com.jtprince.coordinateoffset.config.CoordinateOffsetProviderConfig;
-import com.jtprince.coordinateoffset.provider.OffsetProvider;
-import com.jtprince.coordinateoffset.provider.OffsetProviderConfig;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 import java.util.UUID;
-import java.util.function.Function;
 
 /**
  * API for the CoordinateOffset plugin.
@@ -70,41 +65,21 @@ public interface CoordinateOffsetAPI {
     OffsetLocation adaptLocation(Object platformLocationObject) throws ClassCastException;
 
     /**
-     * Get running configuration of the CoordinateOffset plugin.
+     * Set the active coordinate {@link Offset} for a player.
      *
-     * <p>Configured Offset Providers are not accessible here because they load after the main CoordinateOffset config.
-     * See {@link CoordinateOffsetAPI#getProviderConfig()} for provider-specific configuration access.</p>
+     * <p>This allows API consumers to override the automatically generated offset for a player. The provided offset
+     * will immediately take effect for the player if they are online.</p>
      *
-     * @return The current configuration.
+     * @param player The player whose offset should be changed.
+     * @param offset The new offset value to apply.
      */
-    CoordinateOffsetConfig getConfig();
+    void setOffset(OffsetPlayer player, Offset offset);
 
     /**
-     * Get Offset Providers configured in the CoordinateOffset configuration.
+     * Clear any stored offset for a player, causing the default implementation to generate a new offset the next time
+     * it is required.
      *
-     * <p>Offset Providers load <b>after</b> external plugins have a chance to register new OffsetProvider classes,
-     * so this function must only be called after the server has finished starting up.</p>
-     *
-     * <p>See {@link CoordinateOffsetAPI#getConfig()} for general configuration access.</p>
-     *
-     * @return The current configuration.
-     *
-     * @throws IllegalStateException if Offset Provider configuration has not yet been loaded.
+     * @param player The player whose offset should be cleared.
      */
-    CoordinateOffsetProviderConfig getProviderConfig();
-
-    /**
-     * Register a new OffsetProvider class that can be used in the CoordinateOffset configuration.
-     *
-     * @param className A class name to identify the provider in the configuration. Users may activate this provider
-     *                  by creating a provider in the CoordinateOffset config.yml with a <code>class:</code> parameter
-     *                  matching this name. This should be a simple string matching the class name of the provider,
-     *                  for example <code>"MyOffsetProvider"</code>.
-     * @param deserializeFunction A function that can create instances of the provider from configuration data. For
-     *                            examples, see the built-in providers.
-     */
-    void registerOffsetProviderClass(
-        String className,
-        Function<OffsetProviderConfig, OffsetProvider> deserializeFunction
-    );
+    void clearOffset(OffsetPlayer player);
 }

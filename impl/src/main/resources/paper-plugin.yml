@@ -1,0 +1,8 @@
+name: CoordinateOffset
+version: "${version}"
+main: com.jtprince.coordinateoffset.impl.CoordinateOffsetPlugin
+api-version: "${apiVersion}"
+authors: [ joshuaprince ]
+contributors: [ Cavallium ]
+website: https://github.com/joshuaprince/CoordinateOffset
+description: Obfuscate players' coordinates.
